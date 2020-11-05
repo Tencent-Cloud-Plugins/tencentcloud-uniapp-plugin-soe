@@ -19,6 +19,10 @@
 import RecorderJs from "./recorder.mp3.min";
 // #endif
 import { blob2Base64 } from "./blob-transfer";
+// #ifdef APP-PLUS
+import permision from "./permission.js"
+import { filePath2Base64 } from "./util.js";
+// #endif
 
 /**
  * 录音类
@@ -41,7 +45,7 @@ export default class Recorder {
    * 开启初始化record实例，录音授权
    */
   init = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       // #ifdef H5
       if (this.rec) this.rec.close();
       this.rec = RecorderJs({
@@ -58,12 +62,12 @@ export default class Recorder {
         function () {
           resolve();
         },
-        function (msg, isUserNotAllow) {
-          reject((isUserNotAllow ? "UserNotAllow，" : "") + "无法录音:" + msg);
+        function (msg) {
+          reject(new Error("无法录音:" + msg));
         }
       );
       // #endif
-      // #ifndef H5
+      // #ifdef MP
       uni.authorize({
         scope: "scope.record",
         success: () => {
@@ -76,9 +80,22 @@ export default class Recorder {
           resolve("获取录音权限成功");
         },
         fail: () => {
-          reject("获取录音权限失败");
+          reject(new Error("无法录音:" + msg));
         },
       });
+      // #endif
+      // #ifdef APP-PLUS
+      if(this.callback){
+        reject(new Error('App暂不支持流式上传录音'));
+        return;
+      }
+      const status = await this.checkPermission();
+      if (status !== 1) {
+        reject(new Error("无法录音:没有录音权限"));
+      } else {
+        this.rec = uni.getRecorderManager();
+        resolve("获取录音权限成功");
+      }
       // #endif
     });
   };
@@ -110,12 +127,13 @@ export default class Recorder {
         (msg) => {
           this.rec.close();
           this.rec = null;
-          reject("录音失败:" + msg);
+          reject(new Error("录音失败:" + msg));
         }
       );
       // #endif
       // #ifndef H5
-      this.rec.onStop(({ tempFilePath, fileSize, duration }) => {
+      this.rec.onStop(async ({tempFilePath, fileSize, duration}) => {
+        // #ifdef MP
         uni.getFileSystemManager().readFile({
           filePath: tempFilePath,
           encoding: "base64",
@@ -123,12 +141,22 @@ export default class Recorder {
             resolve({ voiceBase64: data, size: fileSize });
           },
         });
+        // #endif
+        // #ifdef APP-PLUS
+        let {voiceBase64, size} = await filePath2Base64(tempFilePath);
+        voiceBase64 = (/.+;\s*base64\s*,\s*(.+)$/i.exec(voiceBase64) ||
+          [])[1];
+        resolve({ voiceBase64, size: size});
+        // #endif
       });
       this.rec.stop();
       // #endif
     });
   };
 
+  /**
+   * 实时语音流开始
+   */
   startRealTime = async () => {
     await this.init();
     this.rec.start({ sampleRate: 16000, format: "mp3", frameSize: 2 });
@@ -147,4 +175,17 @@ export default class Recorder {
     this.rec.stop();
     // #endif
   };
+
+  /**
+   * 判断APP端录音权限
+   */
+  async checkPermission() {
+    let status = permision.isIOS ? await permision.requestIOS('record') :
+      await permision.requestAndroid('android.permission.RECORD_AUDIO');
+
+    if (status === null || status === 1) {
+      status = 1;
+    }
+    return status;
+  }
 }

@@ -5,17 +5,18 @@
 | ----     | ---------------- |
 | 中文名称   | 腾讯云智聆口语评测（SOE）插件 |
 | 英文名称   | tencentcloud-plugin-soe |
-| 最新版本   | v1.0.1 (2020.08.20) |
+| 最新版本   | v1.0.2 (2020.11.05) |
 | 适用平台   | [DCloud uni-app](https://uniapp.dcloud.net.cn) |
 | 适用产品   | [腾讯云智聆口语评测（SOE）](https://cloud.tencent.com/product/soe-overview) |
 | GitHub项目| [tencentcloud-uniapp-plugin-soe](https://github.com/Tencent-Cloud-Plugins/tencentcloud-uniapp-plugin-soe) |
 | 主创团队   | 腾讯云中小企业产品中心（SMB Product Center of Tencent Cloud） |
+| 兼容平台   | H5、小程序、APP |
 
 一款帮助开发者在uni-app项目开发中快捷使用腾讯云智聆口语评测（SOE）产品功能的插件。
 
 ## 2. 功能特性
 
-- 口语评测功能，支持语音流式分片评测和非流式一次性评测，方便用户使用腾讯云口语评测功能
+- 口语评测功能，支持语音流式分片评测和非流式一次性评测，方便用户使用腾讯云口语评测功能（流式分片评测不支持APP）
 
 ## 3. 安装指引
 
@@ -222,17 +223,30 @@ export default {
 | -------------- | ------------------------------------------------------------------------- |
 | DCloud插件市场 | [腾讯云智聆口语评测（SOE）插件](https://ext.dcloud.net.cn/plugin?id=2577) |
 
-## 6. GitHub版本迭代记录
+## 6. FAQ
+> 暂无
 
-### 6.1. tencentcloud-uniapp-plugin-soe v1.0.0
+
+## 7. GitHub版本迭代记录
+
+### 7.1. tencentcloud-uniapp-plugin-soe v1.0.2
+
+- 非流式一次性评测支持APP端适配
+
+
+### 7.2. tencentcloud-uniapp-plugin-soe v1.0.1
+
+- 修改目录结构
+  
+### 7.3. tencentcloud-uniapp-plugin-soe v1.0.0
 
 - 口语评测功能，支持语音流式分片评测和非流式一次性评测，方便用户使用腾讯云口语评测功能
   
-## 7. 致谢
+## 8. 致谢
 
 - 该插件的 H5 平台语音录制功能参考了[Recorder](https://github.com/xiangyuecn/Recorder),特此对其主创团队进行致谢
 
-## 8. 联系我们
+## 9. 联系我们
 
 &nbsp;&nbsp;&nbsp;扫码备注“春雨”来联络到我们</br>
-![](./images/qrcode.png)
+![](../images/qrcode.png)

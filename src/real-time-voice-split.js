@@ -54,7 +54,7 @@ export default class RealTimeVoiceSplit {
   realTimeSendTryH5 = (rec, isClose) => {
     return new Promise((resolve, reject) => {
       var t1 = Date.now();
-      if (this.realTimeSendTryTime == 0) {
+      if (this.realTimeSendTryTime === 0) {
         this.ealTimeSendTryTime = t1;
         this.realTimeSendTryEncBusy = 0;
         this.realTimeSendTryNumber = 0;
@@ -87,7 +87,7 @@ export default class RealTimeVoiceSplit {
       this.realTimeSendTryChunk = chunk;
 
       //没有新数据，或结束时的数据量太小，不能进行mock转码
-      if (chunk.data.length == 0 || (isClose && chunk.data.length < 2000)) {
+      if (chunk.data.length === 0 || (isClose && chunk.data.length < 2000)) {
         return;
       }
 
@@ -117,7 +117,7 @@ export default class RealTimeVoiceSplit {
         },
         (msg) => {
           this.realTimeSendTryEncBusy && this.realTimeSendTryEncBusy--;
-          reject("转码错误：" + msg);
+          reject(new Error("转码错误：" + msg));
         }
       );
     });
