@@ -84,14 +84,14 @@ export default {
     return {
       status: false, // 是否开始评测标志
       option: {
-        seqId: '', // 分片序号
+        seqId: 0, // 分片序号
         serverType: 0, // 中英文标志
         scoreCoeff: 1, // 难度指数
         evalMode: 0, // 评估模式
         sessionId: '', // 语音唯一标识
         workMode: 1, // 语音是否分片传输
       },
-      refText: 'tencent', // 评估语言对应的文本
+      refText: 'dog', // 评估语言对应的文本
       voiceData: '', // 评估语音 BASE64格式
       recorder: null, // 录音实例
       realTimeVoice: null, // 录音分片实例,
@@ -121,8 +121,10 @@ export default {
         evalMode: Number(this.option.evalMode),
         workMode: Number(this.option.workMode)
       };
-      const { result } = await getVoicePoint(voiceBase64, this.refText, params);
-      this.resultText = result.text;
+      const result  = await getVoicePoint(voiceBase64, this.refText, params);
+      if(isClose){
+        this.resultText = result && result.SuggestedScore;
+      }
     },
     // 开始录音
     async startRecord() {
@@ -156,6 +158,12 @@ export default {
           const res = await this.recorder.stop();
           voiceBase64 = res.voiceBase64;
         }
+        // #ifdef MP
+        // 小程序平台下流式录音在onProcess回调函数里完成评测
+        if(this.option.workMode == workMode.stream) {
+          return;
+        }
+        // #endif
 
         uni.showLoading({
           mask: true,
