@@ -237,16 +237,19 @@ export default {
 
 ## 7. GitHub版本迭代记录
 
-### 7.1. tencentcloud-uniapp-plugin-soe v1.0.2
+### 7.1. tencentcloud-uniapp-plugin-soe v1.0.3
+
+- 代码优化
+
+### 7.2. tencentcloud-uniapp-plugin-soe v1.0.2
 
 - 非流式一次性评测支持APP端适配
 
-
-### 7.2. tencentcloud-uniapp-plugin-soe v1.0.1
+### 7.3. tencentcloud-uniapp-plugin-soe v1.0.1
 
 - 修改目录结构
   
-### 7.3. tencentcloud-uniapp-plugin-soe v1.0.0
+### 7.4. tencentcloud-uniapp-plugin-soe v1.0.0
 
 - 口语评测功能，支持语音流式分片评测和非流式一次性评测，方便用户使用腾讯云口语评测功能
   
