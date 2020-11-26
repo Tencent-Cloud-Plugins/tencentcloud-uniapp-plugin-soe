@@ -34,15 +34,14 @@
  * @return {Promise<object | null>} 评测信息
  */
 export default async function getVoicePoint(voiceData, refText, option = {}) {
-
-  if(option.isEnd !== 1 && !voiceData || !refText || !option.sessionId){
+  if ((option.isEnd !== 1 && !voiceData) || !refText || !option.sessionId) {
     throw new Error('缺少必传参数');
   }
-  
+
   // 默认参数
   const defaultOption = {
     seqId: 1,
-    isEnd: 1,
+    isEnd: 0,
     workMode: 1,
     evalMode: 0,
     scoreCoeff: 2,
@@ -50,13 +49,16 @@ export default async function getVoicePoint(voiceData, refText, option = {}) {
     sentenceInfoEnabled: 0,
     serverType: 0,
     textMode: 0
-  }
+  };
 
-
-  const param = Object.assign({
-    voiceData: voiceData,
-    refText: refText
-  }, defaultOption, option)
+  const param = Object.assign(
+    {
+      voiceData,
+      refText
+    },
+    defaultOption,
+    option
+  );
 
   // 调用云函数来获取口语评测-语音评测信息
   const { result } = await uniCloud.callFunction({
@@ -65,7 +67,7 @@ export default async function getVoicePoint(voiceData, refText, option = {}) {
       module: 'SOE',
       action: 'getVoicePoint',
       param
-    },
+    }
   });
   return result;
-};
+}

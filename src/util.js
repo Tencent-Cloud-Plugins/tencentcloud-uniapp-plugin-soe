@@ -22,21 +22,25 @@
 export async function filePath2Base64(filePath) {
   return new Promise((resolve, reject) => {
     try {
-      plus.io.resolveLocalFileSystemURL(filePath, function(entry) {
-        entry.file(function(file) {
-          const fileReader = new plus.io.FileReader();
-          fileReader.readAsDataURL(file, 'utf-8');
-          fileReader.onloadend = function(evt) {
-            const result = {
-              voiceBase64: evt.target.result,
-              size: file.size
-            }
-            resolve(result);
-          }
-        });
-      }, function(error) {
-        reject(error);
-      });
+      plus.io.resolveLocalFileSystemURL(
+        filePath,
+        function (entry) {
+          entry.file(function (file) {
+            const fileReader = new plus.io.FileReader();
+            fileReader.readAsDataURL(file, 'utf-8');
+            fileReader.onloadend = function (evt) {
+              const result = {
+                voiceBase64: evt.target.result,
+                size: file.size
+              };
+              resolve(result);
+            };
+          });
+        },
+        function (error) {
+          reject(error);
+        }
+      );
     } catch (error) {
       reject(error);
     }

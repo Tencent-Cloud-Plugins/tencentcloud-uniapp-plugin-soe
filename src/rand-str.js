@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict';
 
 /**
  * 生成n位随机码
@@ -22,12 +22,15 @@
  * @param {string} type 类型：string、int
  * @returns {string} sa
  */
-export default function randStr(n, type='string'){
-  let seed = (type === 'string' ? "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ":'1234567890').split('');
-  let sa = "";
-  for(let i = 0; i< n; i++){
-    let pos = Math.round(Math.random() * (seed.length-1));
+export default function randStr(n, type = 'string') {
+  const seed = (type === 'string'
+    ? '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    : '1234567890'
+  ).split('');
+  let sa = '';
+  for (let i = 0; i < n; i++) {
+    const pos = Math.round(Math.random() * (seed.length - 1));
     sa += seed[pos];
   }
-  return sa
+  return sa;
 }

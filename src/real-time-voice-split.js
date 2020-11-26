@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict';
 
-import { blob2Base64 } from "./blob-transfer";
+import { blob2Base64 } from './blob-transfer';
 // #ifdef H5
-import RecorderJs from "./recorder.mp3.min";
+import RecorderJs from './recorder.mp3.min';
 // #endif
 
 /**
  * 实时语音数据分片转码
  */
 export default class RealTimeVoiceSplit {
-
   /**
-   * 
+   *
    * @param {*} [sendInterval] H5实时语音专用：语音分片间隔时间
    */
-  constructor(sendInterval=1000) {
+  constructor(sendInterval = 1000) {
     // 上一次语音推送时间
     this.realTimeSendTryTime = 0;
     // 实时语音分片第几段
@@ -42,7 +41,7 @@ export default class RealTimeVoiceSplit {
     // 语音数据缓冲块
     this.realTimeSendTryChunk = null;
     // 生成blob间隔
-    this.sendInterval = sendInterval; //mp3 chunk数据会缓冲，当pcm的累积时长达到这个时长，就会传输发送。这个值在takeoffEncodeChunk实现下，使用0也不会有性能上的影响。
+    this.sendInterval = sendInterval; // mp3 chunk数据会缓冲，当pcm的累积时长达到这个时长，就会传输发送。这个值在takeoffEncodeChunk实现下，使用0也不会有性能上的影响。
   }
 
   /**
@@ -53,7 +52,7 @@ export default class RealTimeVoiceSplit {
    */
   realTimeSendTryH5 = (rec, isClose) => {
     return new Promise((resolve, reject) => {
-      var t1 = Date.now();
+      const t1 = Date.now();
       if (this.realTimeSendTryTime === 0) {
         this.ealTimeSendTryTime = t1;
         this.realTimeSendTryEncBusy = 0;
@@ -62,36 +61,28 @@ export default class RealTimeVoiceSplit {
         this.realTimeSendTryChunk = null;
       }
       if (!isClose && t1 - this.realTimeSendTryTime < this.sendInterval) {
-        return; //控制缓冲达到指定间隔才进行传输
+        return; // 控制缓冲达到指定间隔才进行传输
       }
       this.realTimeSendTryTime = t1;
       this.realTimeSendTryNumber++;
 
-      //借用SampleData函数进行数据的连续处理，采样率转换是顺带的
-      var chunk = RecorderJs.SampleData(
-        rec.buffers,
-        rec.srcSampleRate,
-        16000,
-        this.realTimeSendTryChunk,
-        { frameType: isClose ? "" : "mp3" }
-      );
+      // 借用SampleData函数进行数据的连续处理，采样率转换是顺带的
+      const chunk = RecorderJs.SampleData(rec.buffers, rec.srcSampleRate, 16000, this.realTimeSendTryChunk, {
+        frameType: isClose ? '' : 'mp3'
+      });
 
-      //清理已处理完的缓冲数据，释放内存以支持长时间录音，最后完成录音时不能调用stop，因为数据已经被清掉了
-      for (
-        var i = this.realTimeSendTryChunk ? this.realTimeSendTryChunk.index : 0;
-        i < chunk.index;
-        i++
-      ) {
+      // 清理已处理完的缓冲数据，释放内存以支持长时间录音，最后完成录音时不能调用stop，因为数据已经被清掉了
+      for (let i = this.realTimeSendTryChunk ? this.realTimeSendTryChunk.index : 0; i < chunk.index; i++) {
         rec.buffers[i] = null;
       }
       this.realTimeSendTryChunk = chunk;
 
-      //没有新数据，或结束时的数据量太小，不能进行mock转码
+      // 没有新数据，或结束时的数据量太小，不能进行mock转码
       if (chunk.data.length === 0 || (isClose && chunk.data.length < 2000)) {
         return;
       }
 
-      //实时编码队列阻塞处理
+      // 实时编码队列阻塞处理
       if (!isClose) {
         if (this.realTimeSendTryEncBusy >= 2) {
           return;
@@ -100,24 +91,24 @@ export default class RealTimeVoiceSplit {
       this.realTimeSendTryEncBusy++;
 
       // 通过mock方法实时转码成mp3、wav
-      var encStartTime = Date.now();
-      var recMock = RecorderJs({
-        type: "mp3",
-        sampleRate: 16000, //采样率
-        bitRate: 16, //比特率
+      const encStartTime = Date.now();
+      const recMock = RecorderJs({
+        type: 'mp3',
+        sampleRate: 16000, // 采样率
+        bitRate: 16 // 比特率
       });
       recMock.mock(chunk.data, chunk.sampleRate);
       recMock.stop(
         async (blob) => {
           this.realTimeSendTryEncBusy && this.realTimeSendTryEncBusy--;
           blob.encTime = Date.now() - encStartTime;
-          let voiceData = await blob2Base64(blob);
-          let base64 = (/.+;\s*base64\s*,\s*(.+)$/i.exec(voiceData) || [])[1];
+          const voiceData = await blob2Base64(blob);
+          const base64 = (/.+;\s*base64\s*,\s*(.+)$/i.exec(voiceData) || [])[1];
           resolve({ data: base64, seq: this.realTimeSendTryNumber });
         },
         (msg) => {
           this.realTimeSendTryEncBusy && this.realTimeSendTryEncBusy--;
-          reject(new Error("转码错误：" + msg));
+          reject(new Error(`转码错误：${msg}`));
         }
       );
     });
@@ -133,5 +124,4 @@ export default class RealTimeVoiceSplit {
     const base64 = uni.arrayBufferToBase64(buffer);
     return { data: base64, seq: this.realTimeSendTryNumber };
   };
-
 }

@@ -5,7 +5,7 @@
 | ----     | ---------------- |
 | 中文名称   | 腾讯云智聆口语评测（SOE）插件 |
 | 英文名称   | tencentcloud-plugin-soe |
-| 最新版本   | v1.0.2 (2020.11.05) |
+| 最新版本   | v1.0.3 (2020.11.26) |
 | 适用平台   | [DCloud uni-app](https://uniapp.dcloud.net.cn) |
 | 适用产品   | [腾讯云智聆口语评测（SOE）](https://cloud.tencent.com/product/soe-overview) |
 | GitHub项目| [tencentcloud-uniapp-plugin-soe](https://github.com/Tencent-Cloud-Plugins/tencentcloud-uniapp-plugin-soe) |

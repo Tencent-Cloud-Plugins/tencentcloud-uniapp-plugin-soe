@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict';
 
 /**
  * blob文件转换base64格式
@@ -24,7 +24,7 @@
 export async function blob2Base64(file) {
   return new Promise((resolve, reject) => {
     try {
-      let fileReader = new FileReader();
+      const fileReader = new FileReader();
       fileReader.onloadend = async () => {
         resolve(fileReader.result);
       };
@@ -43,7 +43,7 @@ export async function blob2Base64(file) {
 export async function blob2ArrayBuffer(file) {
   return new Promise((resolve, reject) => {
     try {
-      let fileReader = new FileReader();
+      const fileReader = new FileReader();
       fileReader.onloadend = async () => {
         resolve(fileReader.result);
       };
